@@ -2,10 +2,25 @@ require("dotenv").config() // dotenv hides the keys
 var keys = require("./keys.js"); //SPOTIFY info is in this file
 var axios = require("axios"); // axios required
 var Spotify = require("node-spotify-api");
-
 var spotify = new Spotify(keys.spotify);
-console.log(spotify);
 
+// DO-WHAT-IT-SAYS GOES HERE
+
+if (process.argv[2] === "do-what-it-says")
+{
+// fs is a core Node package for reading and writing files
+var fs = require("fs");
+// This block of code will read from the "random.txt" file.
+fs.readFile("random.txt", "utf8", function (error, textFileData) {
+    // If the code experiences any errors it will log the error to the console.
+    if (error) {
+        return console.log(error);
+    }
+
+    // set the argv[2] equal to what's in the text file
+    process.argv[2] = textFileData();
+});
+}
 // var whatUserWantsReturned is used in the 2nd argument (ie. movie-this, concert-this)
 // and determines what API to call from
 // if not a command, like moviethis or concert this, switch statement defaults to 'not a valid command'
@@ -54,7 +69,7 @@ switch (whatUserWantsReturned) {
         break;
     // In this case, return back concert data from BandsInTown!
     case "concert-this":
-        var theUrl = "https://rest.bandsintown.com/artists/" + process.argv[3] +"/events?app_id=codingbootcamp";
+        var theUrl = "https://rest.bandsintown.com/artists/" + process.argv[3] + "/events?app_id=codingbootcamp";
 
         // this command is for returning information from the bandsintown database
         // the concert information is here
@@ -62,7 +77,7 @@ switch (whatUserWantsReturned) {
             function (response) {
                 console.log("Event Date" + response.data[0].datetime)
                 console.log("Venue: " + response.data[0].venue.name);
-                 console.log("Location: " + response.data[0].venue.city)
+                console.log("Location: " + response.data[0].venue.city)
             })
             .catch(function (error) {
                 if (error.response) {
@@ -85,21 +100,21 @@ switch (whatUserWantsReturned) {
                 console.log(error.config);
             });
         break;
-        case "spotify-this-song":
+    case "spotify-this-song": // makes use of spotify api to return track info
         {
             // the search in spotify uses the command line argument argv[3]
-            spotify.search({ type: 'track', query: process.argv[3] }, function(err, data) {
+            spotify.search({ type: 'track', query: process.argv[3] }, function (err, data) {
                 if (err) {
-                  return console.log('Error occurred: ' + err);
+                    return console.log('Error occurred: ' + err);
                 }
-               
-              console.log(data.tracks.items[0].artists[0].name); // Log the artist
-              console.log(data.tracks.items[0].name); // log song name
-              console.log(data.tracks.items[0].preview_url); // log preview link (when theres not a preview available it just returns null)
-              console.log(data.tracks.items[0].album.name);// log album title
-              });
+
+                console.log(data.tracks.items[0].artists[0].name); // Log the artist
+                console.log(data.tracks.items[0].name); // log song name
+                console.log(data.tracks.items[0].preview_url); // log preview link (when theres not a preview available it just returns null)
+                console.log(data.tracks.items[0].album.name);// log album title
+            });
         }
         break;
     default:
-    console.log("Not a valid command! Try movie-this, spotify-this-song or concert-this");
+        console.log("Not a valid command! Try movie-this, spotify-this-song or concert-this");
 }
