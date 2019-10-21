@@ -60,7 +60,10 @@ switch (whatUserWantsReturned) {
         // the concert information is here
         axios.get(theUrl).then( // If the request with axios is successful
             function (response) {
-                console.log(response.offers);
+                // console.log("Event Date: " + response.data);
+                console.log("Event Date" + response.data[0].datetime)
+                console.log("Venue: " + response.data[0].venue.name);
+                 console.log("Location: " + response.data[0].venue.city)
             })
             .catch(function (error) {
                 if (error.response) {
