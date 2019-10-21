@@ -4,6 +4,7 @@ var axios = require("axios"); // axios required
 var Spotify = require("node-spotify-api");
 var spotify = new Spotify(keys.spotify);
 var whatUserWantsReturned = process.argv[2];
+var moment = require("moment");
 
 // var whatUserWantsReturned is used in the 2nd argument (ie. movie-this, concert-this) and determines what API to call from
 // if not a command, like moviethis or concert this, switch statement defaults to 'not a valid command'
@@ -56,7 +57,8 @@ switch (whatUserWantsReturned) {
         // the concert information is here
         axios.get(theUrl).then( // If the request with axios is successful
             function (response) {
-                console.log("Event Date" + response.data[0].datetime) // this returned undefined when I tried Travis Scott but worked for Weezer
+                var dateTime = moment(response.data[0].datetime).format("MM/DD/YYYY"); // This variable is only used so I can format it with moment js
+                console.log("Event Date: " + dateTime); // this returned undefined when I tried Travis Scott but worked for Weezer
                 console.log("Venue: " + response.data[0].venue.name);
                 console.log("Location: " + response.data[0].venue.city)
             })
