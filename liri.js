@@ -1,10 +1,10 @@
 require("dotenv").config() // dotenv hides the keys
 var keys = require("./keys.js"); //SPOTIFY info is in this file
 var axios = require("axios"); // axios required
-// require("node-spotify-api");
+var Spotify = require("node-spotify-api");
 
-//var spotify = new Spotify(keys.spotify);
-//console.log(spotify);
+var spotify = new Spotify(keys.spotify);
+console.log(spotify);
 
 // var whatUserWantsReturned is used in the 2nd argument (ie. movie-this, concert-this)
 // and determines what API to call from
@@ -60,7 +60,6 @@ switch (whatUserWantsReturned) {
         // the concert information is here
         axios.get(theUrl).then( // If the request with axios is successful
             function (response) {
-                // console.log("Event Date: " + response.data);
                 console.log("Event Date" + response.data[0].datetime)
                 console.log("Venue: " + response.data[0].venue.name);
                  console.log("Location: " + response.data[0].venue.city)
@@ -86,6 +85,21 @@ switch (whatUserWantsReturned) {
                 console.log(error.config);
             });
         break;
+        case "spotify-this-song":
+        {
+            // the search in spotify uses the command line argument argv[3]
+            spotify.search({ type: 'track', query: process.argv[3] }, function(err, data) {
+                if (err) {
+                  return console.log('Error occurred: ' + err);
+                }
+               
+              console.log(data.tracks.items[0].artists[0].name); // Log the artist
+              console.log(data.tracks.items[0].name); // log song name
+              console.log(data.tracks.items[0].preview_url); // log preview link (when theres not a preview available it just returns null)
+              console.log(data.tracks.items[0].album.name);// log album title
+              });
+        }
+        break;
     default:
-        console.log("Not a valid command! Try movie-this or concert-this");
+    console.log("Not a valid command! Try movie-this, spotify-this-song or concert-this");
 }
